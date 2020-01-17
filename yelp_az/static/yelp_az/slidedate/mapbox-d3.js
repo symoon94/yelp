@@ -1,3 +1,13 @@
+// svg box size
+var margins = {},
+    centered;
+
+// Set margins around rendered map
+margins.top    = 0,
+margins.bottom = 0,
+margins.left   = 0,
+margins.right  = 0;
+
 var view = "map";
 
         //////////////////
@@ -27,14 +37,14 @@ var view = "map";
 
         // Load map and dataset
         map.on('load', function () {
-            d3.json("data/berlin-parks.json", function(err, data) {
+            d3.csv(dataurl, function(err, data) {
                 drawData(data);
             });
         });
 
         // Project GeoJSON coordinate to the map's current state
-        function project(d) {
-            return map.project(new mapboxgl.LngLat(+d[0], +d[1]));
+        function project(lon, lat) {
+            return map.project(new mapboxgl.LngLat(+lon, +lat));
         }
 
 
@@ -47,16 +57,52 @@ var view = "map";
         function drawData(data) {
             console.log("draw data");
 
-            // Add circles
-            circles = svg.selectAll("circle")
-                .data(data.features)
-                .enter()
-                .append("circle")
-                    .attr("r", 16)
-                    .on("click", function(d) {
-                        alert(d.properties.name);
-                    });
+            // give each data an id
+            var id = 0;
+            data.forEach(function(d){
+                d.id = id
+                id = id + 1
+            }); 
 
+            // 
+
+            var sliderTime = d3
+                .sliderBottom()
+                .min(new Date(2010, 10))
+                .max(new Date(2010, 12))
+                .step(1000 * 60 * 60 * 24)
+                .width(800)
+                .tickFormat(d3.timeFormat('%Y %m'))
+                .default(new Date(2010, 11))
+                .on("onchange", function input(val) {
+                    update();
+                    d3.select('p#value-time').text(d3.timeFormat('%Y %m')(val));
+                });
+
+            var gTime = d3
+                .select('div#slider-time')
+                .append('svg')
+                .attr("preserveAspectRatio", "xMinYMin meet")
+                .attr("viewBox","-12 -10 900 100")
+                .attr('class', "slider-map")
+                .append('g');
+
+            gTime.call(sliderTime);
+
+            d3.select('p#value-time')
+                .text(d3.timeFormat('%Y %m')(sliderTime.value()));
+
+            var svg = d3.select("#slidecontainer")
+                .append("svg")
+                .attr("viewBox",margins.top+" "+margins.left+" "+(width-margins.right)+" "+(height-margins.bottom))
+                .attr("preserveAspectRatio", "xMidYMid meet")
+                .append('g')
+                .attr('class', "slidecontainer_group");
+
+
+
+            // 
+            
             // Call the update function
             update();
 
@@ -64,61 +110,41 @@ var view = "map";
             map.on("viewreset", function() { update(0); });
             map.on("move", function() { update(0); });
             map.on("moveend", function() { update(0); });
-        }
+
+            // var loc = svg.append("g")
+            // .attr("class", "slidecontainer_locations");
 
         // Update function
-        function update(transitionTime) {
+        function update() { 
 
-            // Default value = 0
-            transitionTime = (typeof transitionTime !== 'undefined') ? transitionTime : 0;
+            var loc = svg.append("g")
+            .attr("class", "slidecontainer_locations");
 
-            // Map view
-            if (view === "map") {
+            var slider_year = d3.timeFormat('%Y %m')(sliderTime.value())
+            var new_data = data.filter(function filter_by_year(d){ if (d["yr_mo"] == slider_year ) { return true; }});
 
-                svg.selectAll("circle")
-                    .transition()
-                    .duration(transitionTime)
-                       .attr("cx", function(d) { return project(d.geometry.coordinates).x })
-                       .attr("cy", function(d) { return project(d.geometry.coordinates).y });
+            document.querySelectorAll(".slidecontaine_location_markers").forEach(function(d) {
+                d.setAttribute("r",0);
+            })
 
-            // Grid view
-            } else if (view === "grid") {
-
-                var ix = 0,
-                    iy = 0,
-                    rows = 3,
-                    cols = 3;
-
-                // Check window with and height
-                var windowWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0),
-                    windowHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-
-                var gridItemWidth = (windowWidth*0.8)/(cols+1);
-                var gridItemHeight = (windowHeight)/(rows+1);
-
-                svg.selectAll("circle").each(function(d) {
-
-                    var circle = d3.select(this);
-
-                    console.log("ix: " + ix + ", iy: " + iy);
-
-                    circle
-                        .transition()
-                        .duration(transitionTime)
-                            .attr("cx", function(d) {
-                                return (windowWidth*0.2) + (ix*gridItemWidth) + (0.5*gridItemWidth);
-                            })
-                            .attr("cy", function(d) {
-                                return (iy*gridItemHeight) + gridItemHeight;
-                            });
-
-                    // Increase iterators
-                    ix++;
-                    if (ix === cols) { ix = 0; iy++; }
-                    if (iy === rows) { iy = 0; }
-                });
-            }
+            new_data.forEach(function(d) {
+                // console.log(d)
+                var circle = loc.append("circle")
+                    .datum(d)
+                    .html(d)
+                    .attr('class', "slidecontaine_location_markers")
+                    .attr("cx", function(d) { return project(d.lon,d.lat).x ; })
+                    .attr("cy", function(d) { return project(d.lon,d.lat).y ; })
+                    .attr("r", function(d) { return 100; })
+                    .style("fill", function(d) { return "black" })
+                    .style("opacity", 1.0)
+                    .append("title")
+                    .text(function(d) { return d.naver_title; });
+            })
         }
+        }
+
+        
 
         function setMapOpacity(value) {
 
