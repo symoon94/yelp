@@ -12,6 +12,13 @@
     <script src="//d3js.org/d3.v4.min.js"></script>
     <script src="//d3js.org/topojson.v1.min.js"></script>
     <script src="{% static 'topojson/topojson.min.js' %}"></script>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.6.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v1.6.1/mapbox-gl.css" rel="stylesheet" />
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; };
+    </style>
     
 </head>
 <body>
@@ -19,10 +26,16 @@
         var topourl = "{% static 'topojson/AZ_topo.json' %}"
     </script>
 
-    <!-- <script src="{% static 'yelp_az/main_dist.js' %}"></script> -->
+    <!-- <div id="slidecontainer"></div>
 
-    <div id="slidecontainer"></div>
+    <script src="{% static 'yelp_az/slidedate/main_slide.js' %}"></script> -->
 
-    <script src="{% static 'yelp_az/slidedate/main_slide.js' %}"></script>
+    <!--  -->
+    
+    <button id="toggle-view" name="toggle-view" onclick="toggleViews()">Toggle View</button>
+    <div id="map"></div>
+
+    <script src="{% static 'yelp_az/slidedate/mapbox-d3.js' %}"></script>
+
 </body>
 </html>
