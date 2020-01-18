@@ -56,18 +56,11 @@ function project(lon, lat) {
 
 // Draw GeoJSON data with d3
 var circles;
+var texts;
 function drawData(data) {
     console.log("draw data");
 
-    // Add circles
-    circles = svg.selectAll("circle")
-    .data(data)
-    .enter()
-    .append("circle")
-        .attr("r", 16)
-        .on("click", function(d) {
-            alert(d.lat);
-        });
+    
 
     // give each data an id
     var id = 0;
@@ -139,19 +132,67 @@ function update(transitionTime) {
     var slider_year = d3.timeFormat('%Y %m')(sliderTime.value())
     var new_data = data.filter(function filter_by_year(d){ if (d["yr_mo"] == slider_year ) { return true; }});
 
+    
+
     document.querySelectorAll(".slidecontaine_location_markers").forEach(function(d) {
-        d.setAttribute("r",10);
+        d.setAttribute("r",0);
     })
 
+    // Add circles
+    circles = svg.selectAll("circle")
+    .data(new_data)
+    .enter()
+    .append("circle")
+        .attr("r", 8)
+        .on("click", function(d) {
+            alert(d.lat)
+        })
+        .append("title")
+        .text(function(d) {return d.title});
+
+    texts = svg.selectAll("text")
+        .data(new_data)
+        .enter()
+        .append("text")
+        .text(function(d) { return d.title; })
+        .style("opacity", 1);
+    if (map.getZoom() > 11) {
+        d3.selectAll("text")
+        .style("opacity", 1);
+    } else {
+        d3.selectAll("text")
+        .style("opacity", 0);
+    }
     
+
+    // svg.selectAll("circle")
+    // .append("text")
+    // .attr("x", 200)
+    // .attr("y", 200)
+    // .text(function(d) {return d.title});
+    
+    svg.selectAll("text")
+    .transition()
+        .duration(transitionTime)
+        .attr('class', "slidecontaine_location_titles")
+        .attr("dx", function(d) { return d.thenumberofpost/0.7 + project(d.lon,d.lat).x ; })
+        .attr("dy", function(d) { return d.thenumberofpost/4 + project(d.lon,d.lat).y ; })
+        .text(function(d) { return d.title; });
+
     svg.selectAll("circle")
         .transition()
         .duration(transitionTime)
         .attr('class', "slidecontaine_location_markers")
         .attr("cx", function(d) { return project(d.lon,d.lat).x ; })
         .attr("cy", function(d) { return project(d.lon,d.lat).y ; })
+        .attr("opacity", function(d) { return d.ratingValue/5; })
+        .attr("r", function(d) { return d.thenumberofpost/1; });
+        // .attr("text", function(d) { return d.title; });
+        // .append("text");
+        // .append("title")
+        // .text(function(d) {return d.title});
     
-
+    
     
     // new_data.forEach(function(d) {
     //     // console.log(d)
