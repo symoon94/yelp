@@ -508,6 +508,8 @@ svg {
   display: inline-block;
   position: relative;
   z-index: 2;
+  height: 1500px;
+  width: 100%
 }
 
 svg circle {
@@ -691,7 +693,7 @@ p#value-time {
     p#value-time {
     position: fixed;
     padding-left: 7%;
-    top: 37%;
+    top: 65%;
     font-size: 100px;
     font-family: 'Do Hyeon', sans-serif;
     opacity: 0.9;
