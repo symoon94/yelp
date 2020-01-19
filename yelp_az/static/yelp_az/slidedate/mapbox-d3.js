@@ -50,17 +50,20 @@ map.on('load', function () {
         .data(stars)
         .enter()
         .append("rect")
-        .attr("width", function(d) { return 10 + d*20; } )
-        .attr("height", 10)
-        .attr('x', function(d) { return d*10; })
-        .style("fill", "#da111165")
-        .attr("opacity", function(d) { return 0.1; })
+        .attr("class", "slidecontainer_legend_bar")
+        .attr("width", function(d) { return 25; } )
+        .attr("height", 25)
+        .attr("transform", function(d) {return "translate(" + d*60 + ",20)"})
+        // .attr('x', function(d) { return d*10; })
+        .style("fill", "black")
+        .attr("opacity", function(d) { return d/5; });
 
     // Add legend: circles
     legend = legendSvg.selectAll("circle")
         .data(valuesToShow)
         .enter()
         .append("circle")
+        .attr("class", "slidecontainer_legend_circle")
         .attr("cx", xCircle)
         .attr("cy", function(d){ return yCircle - size(d) } )
         .attr("r", function(d){ return size(d) })
@@ -76,7 +79,9 @@ map.on('load', function () {
     .attr('x1', function(d){ return xCircle + size(d) } )
     .attr('x2', xLabel)
     .attr('y1', function(d){ return yCircle - size(d) } )
-    .attr('y2', function(d){ return yCircle - size(d) } );
+    .attr('y2', function(d){ return yCircle - size(d) } )
+    .style("stroke-dasharray", ("2,2"))
+    .style("stroke", "yellow");  // set the line colour
 
     // Add legend: labels
     legendText = legendSvg
@@ -112,7 +117,7 @@ var size = d3.scaleSqrt()
 
 // Add legend: circles
 var valuesToShow = [10, 20, 30]
-var xCircle = 100
+var xCircle = 150
 var xLabel = 210
 var yCircle = 200
 
@@ -209,10 +214,10 @@ function update(transitionTime) {
         .text(function(d) { return d.title; })
         .style("opacity", 1);
     if (map.getZoom() > 11) {
-        d3.selectAll("text")
+        d3.selectAll(".slidecontainer_location_titles")
         .style("opacity", 1);
     } else {
-        d3.selectAll("text")
+        d3.selectAll(".slidecontainer_location_titles")
         .style("opacity", 0);
     }
 

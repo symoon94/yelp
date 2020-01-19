@@ -512,18 +512,6 @@ svg {
   width: 100%
 }
 
-svg circle {
-    /* opacity: .5; */
-    stroke: rgba(126, 7, 7, 0.24);
-    stroke-width: 3;
-}
-svg circle:hover {
-    stroke: rgb(114, 42, 42);
-    stroke-width: 6;
-    transition-delay: 0.2s;
-    r:7;
-}
-
 svg text {
     pointer-events: all;
     font-size: 15;
