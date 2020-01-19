@@ -238,7 +238,8 @@ function update(transitionTime) {
         .attr('class', "slidecontainer_location_titles")
         .attr("dx", function(d) { return d.post/0.7 + project(d.lon,d.lat).x ; })
         .attr("dy", function(d) { return d.post/4 + project(d.lon,d.lat).y ; })
-        .text(function(d) { return d.title; });
+        .text(function(d) { return d.title; })
+        .style("fill", "yellow");
     
         if (map.getZoom() > 11) {
             d3.selectAll(".slidecontainer_location_titles")

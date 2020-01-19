@@ -105,14 +105,39 @@ svg #map text{
 }
 
 p#value-time {
+  position: absolute;
+  padding-left: 4%;
+  font-size: 30px;
+  font-family: 'Chakra Petch', sans-serif;
+  color: #00FF41;
+  z-index: 3;
+  bottom: 6%;
+}
+
+@media screen and (min-width:300px){
+p#value-time {
     position: absolute;
-    padding-left: 7%;
-    font-size: 50px;
+    padding-left: 4%;
+    font-size: 30px;
     font-family: 'Chakra Petch', sans-serif;
     color: #00FF41;
     z-index: 3;
-    bottom: 15%;
+    bottom: 7%;
 }
+}
+
+@media screen and (min-width:300px){
+  p#value-time {
+      position: absolute;
+      padding-left: 4%;
+      font-size: 30px;
+      font-family: 'Chakra Petch', sans-serif;
+      color: #00FF41;
+      z-index: 3;
+      bottom: 9 %;
+      top: 100px;
+  }
+  }
 
 @media screen and (min-width: 890px) and ( min-height: 600px ){
     p#value-time {
@@ -219,14 +244,27 @@ svg.slider-map {
     left: 6%;
   } */
 
-
-div#slider-time {
-    bottom: 70px;
+  div#slider-time {
+    bottom: -40%;
     position: relative;
     width: 100%;
     padding-left: 7%;
 }
+div#slider-time {
+  bottom: 70%;
+  position: relative;
+  width: 100%;
+  padding-left: 7%;
+}
 
+  @media screen and (min-width: 500px) {
+    div#slider-time {
+        bottom: 70px;
+        position: relative;
+        width: 100%;
+        padding-left: 7%;
+    }
+  }
   @media screen and (min-height: 600px) and (min-width: 890px) {
     div#slider-time {
         display: inline-block;
@@ -240,6 +278,8 @@ div#slider-time {
       }
 
   }
+
+  
 
   
 
