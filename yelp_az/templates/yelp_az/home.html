@@ -12,6 +12,7 @@
     <script src="//d3js.org/d3.v4.min.js"></script>
     <script src="//d3js.org/topojson.v1.min.js"></script>
     <script src="{% static 'topojson/topojson.min.js' %}"></script>
+    
 
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.6.1/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v1.6.1/mapbox-gl.css" rel="stylesheet" />
@@ -20,13 +21,21 @@
         body { margin: 0; padding: 0; }
         #map { position: absolute; top: 0; bottom: 0; width: 100%; };
 
-        svg {
+        svg.data {
             position: absolute;
             width: 100%;
             height: 1332%;
           }
 
-          circle.slidecontaine_location_markers {
+        svg.legend {
+        position: absolute;
+        width: 230px;
+        height: 200px;
+        bottom: 4%;
+        right: 2%;
+        }
+
+          circle.slidecontainer_location_markers {
             position: absolute;
             width: 100%;
             height: 100%;
@@ -44,19 +53,40 @@
               stroke-width: 5;
           }
           
-          .slidecontaine_location_titles {
+          
+          .slidecontainer_location_titles {
             position: absolute;
             width: 100%;
             height: 100%;
           }
 
-          .slidecontaine_location_markers:hover {
+          .slidecontainer_location_markers:hover {
               fill: rgba(255, 243, 82, 0.829);
               stroke: #da11111e;
               stroke-width: 9;
           }
 
+          .slidecontainer_legend {
+            position: relative;
+            width: 100%;
+            height: 100%;
+          }
+
           title {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+          }
+
+          .slidecontainer_legend_line {
+            position: absolute;
+            width: 250px;
+            height: 205px;
+            bottom: 5%;
+            right: 3%;
+          }
+
+          .slidecontainer_legend_text {
             position: absolute;
             width: 100%;
             height: 100%;

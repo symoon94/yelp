@@ -506,7 +506,7 @@ div#categories label {
 
 svg {
   display: inline-block;
-  position: relative;
+  position: absolute;
   z-index: 2;
   height: 1500px;
   width: 100%
@@ -520,9 +520,10 @@ svg circle {
 svg circle:hover {
     stroke: rgb(114, 42, 42);
     stroke-width: 6;
-    transition-delay: 0.5s;
+    transition-delay: 0.2s;
     r:7;
 }
+
 svg text {
     pointer-events: all;
     font-size: 15;

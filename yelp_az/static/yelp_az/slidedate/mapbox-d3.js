@@ -34,7 +34,8 @@ var map = new mapboxgl.Map({
 var canvas = map.getCanvasContainer();
 
 // Overlay d3 on the map
-var svg = d3.select(canvas).append("svg");
+var svg = d3.select(canvas).append("svg").attr("class", "data");
+var legendSvg = d3.select(canvas).append("svg").attr("class", "legend");
 
 
 // Load map and dataset
@@ -57,10 +58,24 @@ function project(lon, lat) {
 // Draw GeoJSON data with d3
 var circles;
 var texts;
+var legend;
+var legendText;
+var colorScale = d3.scaleLinear()
+    .domain([0,100])
+    .range(["red", "blue"]);
+
+var size = d3.scaleSqrt()
+    .domain([1, 100])  // What's in the data
+    .range([1, 100]) 
+
+// Add legend: circles
+var valuesToShow = [10, 20, 30]
+var xCircle = 100
+var xLabel = 210
+var yCircle = 200
+
 function drawData(data) {
     console.log("draw data");
-
-    
 
     // give each data an id
     var id = 0;
@@ -96,18 +111,6 @@ function drawData(data) {
 
     d3.select('p#value-time')
         .text(d3.timeFormat('%Y %m')(sliderTime.value()));
-
-    // var slidecontainer = d3.select(canvas)
-    // // d3.select("#slidecontainer")
-    //     .append("svg")
-    //     .attr("viewBox",margins.top+" "+margins.left+" "+(width-margins.right)+" "+(height-margins.bottom))
-    //     .attr("preserveAspectRatio", "xMidYMid meet")
-    //     .append('g')
-    //     .attr('class', "slidecontainer_group");
-
-
-
-    // 
     
     // Call the update function
     update();
@@ -117,8 +120,8 @@ function drawData(data) {
     map.on("move", function() { update(0); });
     map.on("moveend", function() { update(0); });
 
-    // var loc = slidecontainer.append("g")
-    // .attr("class", "slidecontainer_locations");
+    
+
 
 // Update function
 function update(transitionTime) { 
@@ -134,7 +137,7 @@ function update(transitionTime) {
 
     
 
-    document.querySelectorAll(".slidecontaine_location_markers").forEach(function(d) {
+    document.querySelectorAll(".slidecontainer_location_markers").forEach(function(d) {
         d.setAttribute("r",0);
     })
 
@@ -150,6 +153,7 @@ function update(transitionTime) {
         .append("title")
         .text(function(d) {return d.title});
 
+    // Add restaurants' title
     texts = svg.selectAll("text")
         .data(new_data)
         .enter()
@@ -164,53 +168,88 @@ function update(transitionTime) {
         .style("opacity", 0);
     }
     
+    // Add legend
+    legend = legendSvg.selectAll("circle")
+        .data(valuesToShow)
+        .enter()
+        .append("circle")
+        .attr("cx", xCircle)
+        .attr("cy", function(d){ return yCircle - size(d) } )
+        .attr("r", function(d){ return size(d) })
+        .attr("fill", (d) => colorScale(d))
+        .style("fill", "none")
+        .attr("stroke", "black");
 
-    // svg.selectAll("circle")
-    // .append("text")
-    // .attr("x", 200)
-    // .attr("y", 200)
-    // .text(function(d) {return d.title});
-    
-    svg.selectAll("text")
-    .transition()
-        .duration(transitionTime)
-        .attr('class', "slidecontaine_location_titles")
-        .attr("dx", function(d) { return d.thenumberofpost/0.7 + project(d.lon,d.lat).x ; })
-        .attr("dy", function(d) { return d.thenumberofpost/4 + project(d.lon,d.lat).y ; })
-        .text(function(d) { return d.title; });
+    // Add legend: segments
+    legendSvg
+    .selectAll("legend")
+    .data(valuesToShow)
+    .enter()
+    .append("line")
+    .attr('x1', function(d){ return xCircle + size(d) } )
+    .attr('x2', xLabel)
+    .attr('y1', function(d){ return yCircle - size(d) } )
+    .attr('y2', function(d){ return yCircle - size(d) } );
+
+    // Add legend: labels
+    legendText = legendSvg
+    .selectAll("legend")
+    .data(valuesToShow)
+    .enter()
+    .append("text")
+    .attr('x', xLabel)
+    .attr('y', function(d){ return yCircle - size(d) } )
+    .text( function(d){ return d } );
 
     svg.selectAll("circle")
         .transition()
         .duration(transitionTime)
-        .attr('class', "slidecontaine_location_markers")
+        .attr('class', "slidecontainer_location_markers")
         .attr("cx", function(d) { return project(d.lon,d.lat).x ; })
         .attr("cy", function(d) { return project(d.lon,d.lat).y ; })
         .attr("opacity", function(d) { return d.ratingValue/5; })
         .attr("r", function(d) { return d.thenumberofpost/1; });
-        // .attr("text", function(d) { return d.title; });
-        // .append("text");
-        // .append("title")
-        // .text(function(d) {return d.title});
+
+    svg.selectAll("text")
+        .transition()
+        .duration(transitionTime)
+        .attr('class', "slidecontainer_location_titles")
+        .attr("dx", function(d) { return d.thenumberofpost/0.7 + project(d.lon,d.lat).x ; })
+        .attr("dy", function(d) { return d.thenumberofpost/4 + project(d.lon,d.lat).y ; })
+        .text(function(d) { return d.title; });
     
-    
-    
-    // new_data.forEach(function(d) {
-    //     // console.log(d)
-    //     // svg.selectAll("circle")
-    //     loc.append("circle")
-    //         .datum(d)
-    //         .html(d)
-    //         .attr('class', "slidecontaine_location_markers")
-    //         // .transition()
-    //         // .duration(transitionTime)
-    //         .attr("cx", function(d) { return project(d.lon,d.lat).x ; })
-    //         .attr("cy", function(d) { return project(d.lon,d.lat).y ; })
-    //         .attr("r", function(d) { return 10; })
-    //         .style("fill", function(d) { return "aqua" })
-    //         .style("opacity", 1.0)
-    //         // .append("title")
-    //         // .text(function(d) { return d.naver_title; });
-    // })
+    legendSvg.selectAll("circle")
+        .transition()
+        .duration(transitionTime)
+        .attr('class', "slidecontainer_legend")
+        .attr("cx", xCircle)
+        .attr("cy", function(d){ return yCircle - size(d) } )
+        .attr("r", function(d){ return size(d) })
+        .attr("fill", (d) => colorScale(d))
+        .style("fill", "none")
+        .attr("stroke", "black");
+        
+    // Add legend: segments
+    legendSvg.selectAll("line")
+    .transition()
+    .duration(transitionTime)
+    .attr('class', "slidecontainer_legend_line")
+    .attr('x1', function(d){ return xCircle + size(d) } )
+    .attr('x2', xLabel)
+    .attr('y1', function(d){ return yCircle - size(d) } )
+    .attr('y2', function(d){ return yCircle - size(d) } )
+    .attr('stroke', 'black')
+    .style('stroke-dasharray', ('2,2'));
+
+    legendSvg.selectAll("text")
+        .transition()
+        .duration(transitionTime)
+        .attr('class', "slidecontainer_legend_text")
+        .attr('x', xLabel)
+        .attr('y', function(d){ return yCircle - size(d) } )
+        .text( function(d){ return d } )
+        .style("font-size", 10)
+        .attr('alignment-baseline', 'middle');
 }
 }
 
@@ -220,7 +259,7 @@ function setMapOpacity(value) {
 
     d3.selectAll(".mapboxgl-canvas")
         .transition()
-        .duration(500)
+        .duration(200)
             .style("opacity", value);
 
     d3.selectAll(".mapboxgl-control-container")
