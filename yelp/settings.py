@@ -71,7 +71,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'yelp.wsgi.application'
 
-# on local
+# # on local
 # # Database
 # # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
