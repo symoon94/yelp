@@ -45,7 +45,7 @@ map.on('load', function () {
     });
 
     // Add legend: bar
-    legendBar = legendSvg
+    legendSvg
         .selectAll("legend-bar")
         .data(stars)
         .enter()
@@ -59,7 +59,7 @@ map.on('load', function () {
         .attr("opacity", function(d) { return d/5; });
 
     // Add legend: circles
-    legend = legendSvg.selectAll("circle")
+    legendSvg.selectAll("circle")
         .data(valuesToShow)
         .enter()
         .append("circle")
