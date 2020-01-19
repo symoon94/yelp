@@ -54,9 +54,19 @@ map.on('load', function () {
         .attr("width", function(d) { return 25; } )
         .attr("height", 25)
         .attr("transform", function(d) {return "translate(" + d*60 + ",20)"})
-        // .attr('x', function(d) { return d*10; })
         .style("fill", "black")
         .attr("opacity", function(d) { return d/5; });
+
+    // Add legend: labels
+    legendSvg
+        .selectAll("legend-bar")
+        .data(starsSym)
+        .enter()
+        .append("text")
+        .attr("class", "slidecontainer_legend_text")
+        .attr('x', function(d){ return 34 + d*59 } )
+        .attr('y', 73 )
+        .text( function(d){ return "★" + d } );
 
     // Add legend: circles
     legendSvg.selectAll("circle")
@@ -84,7 +94,7 @@ map.on('load', function () {
     .style("stroke", "yellow");  // set the line colour
 
     // Add legend: labels
-    legendText = legendSvg
+    legendSvg
         .selectAll("legend")
         .data(valuesToShow)
         .enter()
@@ -117,12 +127,13 @@ var size = d3.scaleSqrt()
 
 // Add legend: circles
 var valuesToShow = [10, 20, 30]
-var xCircle = 150
-var xLabel = 210
+var xCircle = 160
+var xLabel = 250
 var yCircle = 200
 
 // Add legend: horizontal
 var stars = [0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5];
+var starsSym = [0, 5]
 
 var colorScale = d3.scaleSequential()
     .domain([0, 5])
