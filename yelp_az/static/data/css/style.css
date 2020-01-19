@@ -515,6 +515,7 @@ svg {
 svg text {
     pointer-events: all;
     font-size: 15;
+    font-family: 'Chakra Petch', sans-serif;
 }
 svg .municipality {
     fill: #C5C6B6;

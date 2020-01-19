@@ -53,7 +53,7 @@ map.on('load', function () {
         .attr("class", "slidecontainer_legend_bar")
         .attr("width", function(d) { return 25; } )
         .attr("height", 25)
-        .attr("transform", function(d) {return "translate(" + d*60 + ",20)"})
+        .attr("transform", function(d) {return "translate(" + d*30 + ",20)"})
         .style("fill", "black")
         .attr("opacity", function(d) { return d/5; });
 
@@ -64,7 +64,7 @@ map.on('load', function () {
         .enter()
         .append("text")
         .attr("class", "slidecontainer_legend_text")
-        .attr('x', function(d){ return 34 + d*59 } )
+        .attr('x', function(d){ return 34 + d*29 } )
         .attr('y', 73 )
         .text( function(d){ return "★" + d } );
 
@@ -87,11 +87,11 @@ map.on('load', function () {
     .enter()
     .append("line")
     .attr('x1', function(d){ return xCircle + size(d) } )
-    .attr('x2', xLabel)
+    .attr('x2', xLabel-5)
     .attr('y1', function(d){ return yCircle - size(d) } )
     .attr('y2', function(d){ return yCircle - size(d) } )
     .style("stroke-dasharray", ("2,2"))
-    .style("stroke", "yellow");  // set the line colour
+    .style("stroke", "#008F11");  // set the line colour
 
     // Add legend: labels
     legendSvg
@@ -100,8 +100,9 @@ map.on('load', function () {
         .enter()
         .append("text")
         .attr('x', xLabel)
-        .attr('y', function(d){ return yCircle - size(d) } )
-        .text( function(d){ return d } );
+        .attr('y', function(d){ return 3 + yCircle - size(d) } )
+        .text( function(d){ return d } )
+        .style("fill", "#00FF41");
 });
 
 // Project GeoJSON coordinate to the map's current state
@@ -127,12 +128,12 @@ var size = d3.scaleSqrt()
 
 // Add legend: circles
 var valuesToShow = [10, 20, 30]
-var xCircle = 160
+var xCircle = 90
 var xLabel = 250
 var yCircle = 200
 
 // Add legend: horizontal
-var stars = [0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5];
+var stars = [0,1,2,3,4,5];
 var starsSym = [0, 5]
 
 var colorScale = d3.scaleSequential()
