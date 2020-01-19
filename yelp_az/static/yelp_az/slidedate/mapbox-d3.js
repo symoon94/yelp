@@ -152,12 +152,12 @@ function drawData(data) {
 
     var sliderTime = d3
         .sliderBottom()
-        .min(new Date(2010, 10))
-        .max(new Date(2010, 12))
+        .min(new Date(2011, 01))
+        .max(new Date(2019, 12))
         .step(1000 * 60 * 60 * 24)
         .width(800)
         .tickFormat(d3.timeFormat('%Y %m'))
-        .default(new Date(2010, 11))
+        .default(new Date(2019, 12))
         .on("onchange", function input(val) {
             update();
             d3.select('p#value-time').text(d3.timeFormat('%Y %m')(val));
@@ -194,7 +194,7 @@ function update(transitionTime) {
     transitionTime = (typeof transitionTime !== 'undefined') ? transitionTime : 0;
 
     var slider_year = d3.timeFormat('%Y %m')(sliderTime.value())
-    var new_data = data.filter(function filter_by_year(d){ if (d["yr_mo"] == slider_year ) { return true; }});
+    var new_data = data.filter(function filter_by_year(d){ if (d["date"] == slider_year ) { return true; }});
 
     
 
@@ -213,7 +213,7 @@ function update(transitionTime) {
     .append("circle")
         .attr("r", 8)
         .on("click", function(d) {
-            alert(d.lat)
+            alert(d.url)
         })
         .append("title")
         .text(function(d) {return d.title});
@@ -240,16 +240,16 @@ function update(transitionTime) {
         .attr('class', "slidecontainer_location_markers")
         .attr("cx", function(d) { return project(d.lon,d.lat).x ; })
         .attr("cy", function(d) { return project(d.lon,d.lat).y ; })
-        .attr("opacity", function(d) { return d.ratingValue/5; })
-        .attr("r", function(d) { return d.thenumberofpost/1; });
+        .attr("opacity", function(d) { return d.rate/5; })
+        .attr("r", function(d) { return d.post/1; });
 
     // restaurants' title
     svg.selectAll("text")
         .transition()
         .duration(transitionTime)
         .attr('class', "slidecontainer_location_titles")
-        .attr("dx", function(d) { return d.thenumberofpost/0.7 + project(d.lon,d.lat).x ; })
-        .attr("dy", function(d) { return d.thenumberofpost/4 + project(d.lon,d.lat).y ; })
+        .attr("dx", function(d) { return d.post/0.7 + project(d.lon,d.lat).x ; })
+        .attr("dy", function(d) { return d.post/4 + project(d.lon,d.lat).y ; })
         .text(function(d) { return d.title; });
     
 
