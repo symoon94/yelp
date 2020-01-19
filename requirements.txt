@@ -10,7 +10,6 @@ ipython==7.2.0
 ipython-genutils==0.2.0
 numpy==1.16.2
 pandas==0.24.2
-psycopg2==2.8.2
 Scrapy==1.6.0
 urllib3>=1.24.2
 w3lib==1.20.0
