@@ -43,6 +43,50 @@ map.on('load', function () {
     d3.csv(dataurl, function(err, data) {
         drawData(data);
     });
+
+    // Add legend: bar
+    legendBar = legendSvg
+        .selectAll("legend-bar")
+        .data(stars)
+        .enter()
+        .append("rect")
+        .attr("width", function(d) { return 10 + d*20; } )
+        .attr("height", 10)
+        .attr('x', function(d) { return d*10; })
+        .style("fill", "#da111165")
+        .attr("opacity", function(d) { return 0.1; })
+
+    // Add legend: circles
+    legend = legendSvg.selectAll("circle")
+        .data(valuesToShow)
+        .enter()
+        .append("circle")
+        .attr("cx", xCircle)
+        .attr("cy", function(d){ return yCircle - size(d) } )
+        .attr("r", function(d){ return size(d) })
+        .style("fill", "none")
+        .attr("stroke", "black");
+
+    // Add legend: segments
+    legendSvg
+    .selectAll("legend")
+    .data(valuesToShow)
+    .enter()
+    .append("line")
+    .attr('x1', function(d){ return xCircle + size(d) } )
+    .attr('x2', xLabel)
+    .attr('y1', function(d){ return yCircle - size(d) } )
+    .attr('y2', function(d){ return yCircle - size(d) } );
+
+    // Add legend: labels
+    legendText = legendSvg
+        .selectAll("legend")
+        .data(valuesToShow)
+        .enter()
+        .append("text")
+        .attr('x', xLabel)
+        .attr('y', function(d){ return yCircle - size(d) } )
+        .text( function(d){ return d } );
 });
 
 // Project GeoJSON coordinate to the map's current state
@@ -60,9 +104,7 @@ var circles;
 var texts;
 var legend;
 var legendText;
-var colorScale = d3.scaleLinear()
-    .domain([0,100])
-    .range(["red", "blue"]);
+var legendBar;
 
 var size = d3.scaleSqrt()
     .domain([1, 100])  // What's in the data
@@ -74,6 +116,13 @@ var xCircle = 100
 var xLabel = 210
 var yCircle = 200
 
+// Add legend: horizontal
+var stars = [0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5];
+
+var colorScale = d3.scaleSequential()
+    .domain([0, 5])
+    .interpolator(d3["interpolateRainbow"]);
+
 function drawData(data) {
     console.log("draw data");
 
@@ -83,8 +132,6 @@ function drawData(data) {
         d.id = id
         id = id + 1
     }); 
-
-    // 
 
     var sliderTime = d3
         .sliderBottom()
@@ -129,13 +176,14 @@ function update(transitionTime) {
     // Default value = 0
     transitionTime = (typeof transitionTime !== 'undefined') ? transitionTime : 0;
 
-    // var loc = slidecontainer.append("g")
-    // .attr("class", "slidecontainer_locations");
-
     var slider_year = d3.timeFormat('%Y %m')(sliderTime.value())
     var new_data = data.filter(function filter_by_year(d){ if (d["yr_mo"] == slider_year ) { return true; }});
 
     
+
+    document.querySelectorAll(".slidecontainer_location_markers").forEach(function(d) {
+        d.setAttribute("r",0);
+    })
 
     document.querySelectorAll(".slidecontainer_location_markers").forEach(function(d) {
         d.setAttribute("r",0);
@@ -167,40 +215,8 @@ function update(transitionTime) {
         d3.selectAll("text")
         .style("opacity", 0);
     }
-    
-    // Add legend
-    legend = legendSvg.selectAll("circle")
-        .data(valuesToShow)
-        .enter()
-        .append("circle")
-        .attr("cx", xCircle)
-        .attr("cy", function(d){ return yCircle - size(d) } )
-        .attr("r", function(d){ return size(d) })
-        .attr("fill", (d) => colorScale(d))
-        .style("fill", "none")
-        .attr("stroke", "black");
 
-    // Add legend: segments
-    legendSvg
-    .selectAll("legend")
-    .data(valuesToShow)
-    .enter()
-    .append("line")
-    .attr('x1', function(d){ return xCircle + size(d) } )
-    .attr('x2', xLabel)
-    .attr('y1', function(d){ return yCircle - size(d) } )
-    .attr('y2', function(d){ return yCircle - size(d) } );
-
-    // Add legend: labels
-    legendText = legendSvg
-    .selectAll("legend")
-    .data(valuesToShow)
-    .enter()
-    .append("text")
-    .attr('x', xLabel)
-    .attr('y', function(d){ return yCircle - size(d) } )
-    .text( function(d){ return d } );
-
+    // circles
     svg.selectAll("circle")
         .transition()
         .duration(transitionTime)
@@ -210,6 +226,7 @@ function update(transitionTime) {
         .attr("opacity", function(d) { return d.ratingValue/5; })
         .attr("r", function(d) { return d.thenumberofpost/1; });
 
+    // restaurants' title
     svg.selectAll("text")
         .transition()
         .duration(transitionTime)
@@ -218,38 +235,7 @@ function update(transitionTime) {
         .attr("dy", function(d) { return d.thenumberofpost/4 + project(d.lon,d.lat).y ; })
         .text(function(d) { return d.title; });
     
-    legendSvg.selectAll("circle")
-        .transition()
-        .duration(transitionTime)
-        .attr('class', "slidecontainer_legend")
-        .attr("cx", xCircle)
-        .attr("cy", function(d){ return yCircle - size(d) } )
-        .attr("r", function(d){ return size(d) })
-        .attr("fill", (d) => colorScale(d))
-        .style("fill", "none")
-        .attr("stroke", "black");
-        
-    // Add legend: segments
-    legendSvg.selectAll("line")
-    .transition()
-    .duration(transitionTime)
-    .attr('class', "slidecontainer_legend_line")
-    .attr('x1', function(d){ return xCircle + size(d) } )
-    .attr('x2', xLabel)
-    .attr('y1', function(d){ return yCircle - size(d) } )
-    .attr('y2', function(d){ return yCircle - size(d) } )
-    .attr('stroke', 'black')
-    .style('stroke-dasharray', ('2,2'));
 
-    legendSvg.selectAll("text")
-        .transition()
-        .duration(transitionTime)
-        .attr('class', "slidecontainer_legend_text")
-        .attr('x', xLabel)
-        .attr('y', function(d){ return yCircle - size(d) } )
-        .text( function(d){ return d } )
-        .style("font-size", 10)
-        .attr('alignment-baseline', 'middle');
 }
 }
 
