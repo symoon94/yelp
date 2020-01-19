@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'yelp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'munsuyeong',
+        'NAME': 'cztheday25',
         'USER': 'symoon94',
         'PASSWORD': '',
         'HOST': 'localhost',
