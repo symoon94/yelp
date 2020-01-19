@@ -64,7 +64,7 @@ map.on('load', function () {
         .enter()
         .append("text")
         .attr("class", "slidecontainer_legend_text")
-        .attr('x', function(d){ return 34 + d*29 } )
+        .attr('x', function(d){ return 34 + d*27 } )
         .attr('y', 73 )
         .text( function(d){ return "★" + d } );
 
@@ -129,7 +129,7 @@ var size = d3.scaleSqrt()
 // Add legend: circles
 var valuesToShow = [10, 20, 30]
 var xCircle = 90
-var xLabel = 250
+var xLabel = 200
 var yCircle = 200
 
 // Add legend: horizontal
