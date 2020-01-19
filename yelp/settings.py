@@ -95,7 +95,7 @@ DATABASES = {
 }
 
 # on the heroku
-WSGI_APPLICATION = 'mukvantgarde.wsgi.application'
+WSGI_APPLICATION = 'yelp.wsgi.application'
 
 
 # Password validation
