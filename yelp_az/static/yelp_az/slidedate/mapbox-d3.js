@@ -54,8 +54,9 @@ map.on('load', function () {
         .attr("width", function(d) { return 25; } )
         .attr("height", 25)
         .attr("transform", function(d) {return "translate(" + d*30 + ",20)"})
-        .style("fill", "black")
-        .attr("opacity", function(d) { return d/5; });
+        .style("fill", "#da1111d3")
+        .attr("opacity", function(d) { return d/5; })
+        .style("stroke", "black");
 
     // Add legend: labels
     legendSvg
@@ -127,8 +128,8 @@ var size = d3.scaleSqrt()
     .range([1, 100]) 
 
 // Add legend: circles
-var valuesToShow = [10, 20, 30]
-var xCircle = 90
+var valuesToShow = [5, 15, 35]
+var xCircle = 100
 var xLabel = 200
 var yCircle = 200
 
@@ -152,7 +153,7 @@ function drawData(data) {
 
     var sliderTime = d3
         .sliderBottom()
-        .min(new Date(2011, 01))
+        .min(new Date(2007, 03))
         .max(new Date(2019, 12))
         .step(1000 * 60 * 60 * 24)
         .width(800)
@@ -190,21 +191,19 @@ function drawData(data) {
 // Update function
 function update(transitionTime) { 
 
+    document.querySelectorAll(".slidecontainer_location_markers").forEach(function(d) {
+        d.setAttribute("r",0);
+    })
+
+    document.querySelectorAll(".slidecontainer_location_titles").forEach(function(d) {
+        d.setAttribute("opacity",0);
+    })
+
     // Default value = 0
     transitionTime = (typeof transitionTime !== 'undefined') ? transitionTime : 0;
 
     var slider_year = d3.timeFormat('%Y %m')(sliderTime.value())
     var new_data = data.filter(function filter_by_year(d){ if (d["date"] == slider_year ) { return true; }});
-
-    
-
-    document.querySelectorAll(".slidecontainer_location_markers").forEach(function(d) {
-        d.setAttribute("r",0);
-    })
-
-    document.querySelectorAll(".slidecontainer_location_markers").forEach(function(d) {
-        d.setAttribute("r",0);
-    })
 
     // Add circles
     circles = svg.selectAll("circle")
@@ -213,25 +212,14 @@ function update(transitionTime) {
     .append("circle")
         .attr("r", 8)
         .on("click", function(d) {
-            alert(d.url)
-        })
-        .append("title")
-        .text(function(d) {return d.title});
+            window.open(d.url)
+        });
 
     // Add restaurants' title
     texts = svg.selectAll("text")
         .data(new_data)
         .enter()
-        .append("text")
-        .text(function(d) { return d.title; })
-        .style("opacity", 1);
-    if (map.getZoom() > 11) {
-        d3.selectAll(".slidecontainer_location_titles")
-        .style("opacity", 1);
-    } else {
-        d3.selectAll(".slidecontainer_location_titles")
-        .style("opacity", 0);
-    }
+        .append("text");
 
     // circles
     svg.selectAll("circle")
@@ -240,8 +228,8 @@ function update(transitionTime) {
         .attr('class', "slidecontainer_location_markers")
         .attr("cx", function(d) { return project(d.lon,d.lat).x ; })
         .attr("cy", function(d) { return project(d.lon,d.lat).y ; })
-        .attr("opacity", function(d) { return d.rate/5; })
-        .attr("r", function(d) { return d.post/1; });
+        .attr("opacity", function(d) { return d.rate/d.post/5; })
+        .attr("r", function(d) { return d.post; });
 
     // restaurants' title
     svg.selectAll("text")
@@ -252,7 +240,13 @@ function update(transitionTime) {
         .attr("dy", function(d) { return d.post/4 + project(d.lon,d.lat).y ; })
         .text(function(d) { return d.title; });
     
-
+        if (map.getZoom() > 11) {
+            d3.selectAll(".slidecontainer_location_titles")
+            .style("opacity", 1);
+        } else {
+            d3.selectAll(".slidecontainer_location_titles")
+            .style("opacity", 0);
+        }
 }
 }
 
@@ -288,22 +282,3 @@ function hideMap() {
     map.scrollZoom.disable();
     map.dragPan.disable();
 }
-
-
-// ////////////
-// // Toggle
-// ////////////
-
-// function toggleViews() {
-
-//     // Toggle active view
-//     if (view == "map") {
-//         view = "grid";
-//         hideMap();
-//     } else if (view == "grid") {
-//         view = "map";
-//         showMap();
-//     }
-
-//     update(500);
-// }
