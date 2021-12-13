@@ -35,7 +35,7 @@ jedi==0.15.1
 jmespath==0.9.4
 js2xml==0.3.1
 lazy-object-proxy==1.4.3
-lxml==4.4.2
+lxml==4.6.5
 mccabe==0.6.1
 more-itertools==8.1.0
 numpy==1.18.1
